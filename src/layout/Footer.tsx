@@ -2,10 +2,14 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 function Footer() {
-    
+
   return (
-    <View>
-      <Text>Footer</Text>
+    <View style={{
+      backgroundColor: "#ccccff",
+      height: "8%"
+    }}
+    >
+
     </View>
   );
 }

@@ -1,20 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { TextInput, Text, View, StyleSheet } from 'react-native';
+import { TextInput, Text, View, StyleSheet ,Pressable} from 'react-native';
 import { ApiKey } from '../OpenApiKey';
 import PressableButton from '../components/PressableButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Search({navigation}:{navigation:any}) {
     var [city, onChangeText] = React.useState('');
     var [data, setData] = useState(Object);
     useEffect(() => {
-        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${ApiKey}`)
+        fetch(`https://api.weatherapi.com/v1/current.json?key=${ApiKey}&q=${city}&aqi=no`)
             .then(res => res.json())
             .then(res => setData(res))
             //.then(res => console.log(res))
             .catch(err => console.log(err))
     }, [city]);
+    const saveLocation = async () => {
+        
+        try {
+            await AsyncStorage.setItem('locationName', city);
+            await navigation.navigate('Home',city);
+           
+        } catch (error) {
+            console.log('Error saving location:', error);
+        }
+    };
+    
     return (
-        <View>
+        <View style={{backgroundColor:"#ccccff",height:"100%"}}>
             <View>
                 <TextInput
                     style={styles.input}
@@ -22,17 +34,18 @@ function Search({navigation}:{navigation:any}) {
                     value={city}
                 />
             </View>
-            <Text></Text>
+
             <View>
-                {data.main && data.weather && (
-                    <View>
-                        <Text style={{ fontSize: 20 }}>{data['name']},{data['sys']['country']}{(data['main']['temp'] - 273).toFixed(2)}&deg;</Text>
-                        
-                        <PressableButton 
-                        title={"Add"}
-                        onPress={()=>navigation.navigate('Home',city)}
-                        />
-                    </View>
+                {data.location && (
+                    <Pressable onPress={saveLocation}>
+                        <Text style={{
+                             fontSize: 20,
+                             backgroundColor:"#00bfff",
+                             height:60,
+                             padding:15
+                             }}
+                             >{data.location['name']},{data.location['country']}</Text>
+                    </Pressable>
                 )}
             </View>
         </View>
