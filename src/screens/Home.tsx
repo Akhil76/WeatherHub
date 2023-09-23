@@ -31,89 +31,133 @@ function Home({ navigation }: { navigation: any }) {
 
 
     return (
-        <ScrollView
-            style={{
-                backgroundColor: "#cce6ff",
-                height: "100%"
-            }}
-        >
-            <View style={{
-                display: "flex",
-                flexWrap: "wrap",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                margin: 10
-            }}>
+        <ScrollView style={styles.main_area}>
+            <View style={styles.btn_area}>
                 <IconButton
                     Name={"search"}
-                    Size={30}
+                    Size={35}
                     onPress={() => navigation.navigate('Search')}
                 />
+                <View>
+                    {
+                        data.location && (
+                            <View >
+                                <Text style={{ fontSize: 30 }}>{location}</Text>
+                                <Text style={{ fontSize: 15 }}>{data.location['country']}</Text>
+                            </View>
+                        )
+                    }
+                </View>
                 <IconButton
                     Name={"gear"}
-                    Size={30}
+                    Size={35}
                     onPress={() => navigation.navigate('Settings')}
                 />
             </View>
-
             <View>
-                {
-                    data.location && data.current && (
-                        <View style={{ padding: 20 }}>
+                <View >
+                    {
+                        data.location && data.current && (
                             <View>
-                                <Text style={{ fontSize: 40 }}>{data.location['name']}</Text>
-                                <Text style={{ fontSize: 20 }}>{data.location['country']}</Text>
-                                <Text style={{ fontSize: 80 }}>{data.current['temp_c']}</Text>
-                                <Text style={{ fontSize: 30 }}>{data.current['condition']['text']}</Text>
+                                <View style={{ alignItems: "center" }}>
+                                    <Image
+                                        style={styles.Logo}
+                                        source={{
+                                            uri: 'https:' + data.current['condition']['icon'],
+                                        }}
+                                    />
+                                    <Text style={{ fontSize: 20 }}>{data.current['condition']['text']}</Text>
+                                    <Text style={{ fontSize: 80 }}>{data.current['temp_c']} &deg;</Text>
+                                    <Text style={{ fontSize: 20 }}>{data.location['localtime']}</Text>
+                                </View>
+                                <View style={styles.weather_widget}>
+                                    <View style={{ width: "50%" }}>
+                                        <Text style={{ fontSize: 20 }}>Humdity</Text>
+                                        <Text style={{ fontSize: 50 }}>{data.current['humidity']}%</Text>
+                                    </View>
+                                    <View style={{ width: "50%" }}>
+                                        <Text style={{ fontSize: 20 }}>Feel like</Text>
+                                        <Text style={{ fontSize: 50 }}>{data.current['feelslike_c']}&deg;C</Text>
+                                    </View>
+                                    <View style={{ width: "50%" }}>
+                                        <Text style={{ fontSize: 20 }}>Wind</Text>
+                                        <Text style={{ fontSize: 50 }}>{data.current['wind_kph']}</Text>
+                                    </View>
+                                    <View style={{ width: "50%" }}>
+                                        <Text style={{ fontSize: 20 }}>Cloud</Text>
+                                        <Text style={{ fontSize: 50 }}>{data.current['cloud']}%</Text>
+                                    </View>
+                                </View>
                             </View>
-                            <View>
-                                <Image
-                                    style={styles.tinyLogo}
-                                    source={{
-                                        uri: 'https:' + data.current['condition']['icon'],
-                                    }}
-                                />
-                            </View>
-                            <View>
-                                <Text style={{ fontSize: 40 }}>Wind:</Text>
-                                <Text style={{ fontSize: 40 }}>Pressure:</Text>
-                                <Text style={{ fontSize: 40 }}>Humidity:</Text>
-                                <Text style={{ fontSize: 40 }}>Visibility:</Text>
-                            </View>
+                        )}
+                </View>
+                <View style={styles.daily_forecast}>
+                    {data.forecast && data.forecast.forecastday.map((day: { date: string; day: { maxtemp_c: number; mintemp_c: number, condition: { text: string, icon: string } }; }) => (
+                        <View style={{
+                            margin: 10,
+                            width: "25%",
+                        }}
+                            key={day.date}
+                        >
+                            <Text>Date: {day.date}</Text>
+                            <Text>{day.day.maxtemp_c}/{day.day.mintemp_c}°C</Text>
+                            <Image
+                                style={styles.tinyLogo}
+                                source={{
+                                    uri: 'https:' + day.day.condition.icon
+                                }}
+                            />
+                            <Text>{day.day.condition.text}</Text>
+                            {/* Add more forecast data as needed */}
                         </View>
-                    )}
-            </View>
-            <View style={{
-                display: "flex",
-                flexWrap: "wrap",
-                flexDirection: "row",
-            }}>
-                {data.forecast && data.forecast.forecastday.map((day: { date: boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.Key | null | undefined; day: { maxtemp_c: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; mintemp_c: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; }; }) => (
-                    <View style={{
-                        backgroundColor: "yellow",
-                        margin: 5,
-
-                    }}>
-                        <Text>Date: {day.date}</Text>
-                        <Text>Max Temp: {day.day.maxtemp_c}°C</Text>
-                        <Text>Min Temp: {day.day.mintemp_c}°C</Text>
-                        {/* Add more forecast data as needed */}
-                    </View>
-                ))}
+                    ))}
+                </View>
             </View>
         </ScrollView>
     );
 }
 const styles = StyleSheet.create({
+    main_area: {
+        backgroundColor: "#cce6ff",
+        height: "100%"
+    },
+    btn_area: {
+        display: "flex",
+        flexWrap: "wrap",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        margin: 10
+    },
+    weather_widget: {
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "wrap",
+        backgroundColor: "#e6ffcc",
+        margin: 10,
+        padding: 15,
+        borderRadius: 13
+    },
+    daily_forecast: {
+        display: "flex",
+        flexWrap: "wrap",
+        flexDirection: "row",
+        backgroundColor: "#e6ffcc",
+        margin: 10,
+        borderRadius: 13
+    },
     input: {
         height: 40,
         margin: 12,
         borderWidth: 1,
         padding: 10,
     },
-    tinyLogo: {
-        width: 200,
+    Logo: {
+        width: 190,
         height: 170,
+    },
+    tinyLogo: {
+        width: 50,
+        height: 50,
     },
 });
 

@@ -12,7 +12,7 @@ interface BtnProps {
 function IconButton ({Name,Size,onPress}:BtnProps){
 
   return (
-    <Pressable onPress={onPress} style={{padding:10}}>
+    <Pressable onPress={onPress} style={{padding:5}}>
        <Icon name={Name} size={Size}/>
     </Pressable>
   );
