@@ -30,6 +30,7 @@ function Search({navigation}:{navigation:any}) {
             <View>
                 <TextInput
                     style={styles.input}
+                    placeholder='Search city'
                     onChangeText={onChangeText}
                     value={city}
                 />

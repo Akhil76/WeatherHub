@@ -31,7 +31,7 @@ function Home({ navigation }: { navigation: any }) {
 
     },);
 
-    
+
     return (
         <ScrollView style={styles.main_area}>
             <View style={styles.btn_area}>
@@ -74,19 +74,51 @@ function Home({ navigation }: { navigation: any }) {
                                     <Text style={{ fontSize: 20 }}>{data.location['localtime_epoch']}</Text>
                                 </View>
                                 <View style={styles.weather_widget}>
-                                    <View style={{ width: "50%" }}>
+                                    <View
+                                        style={{
+                                            width: "48%",
+                                            backgroundColor: "#7CFC00",
+                                            padding: 5,
+                                            margin: 3,
+                                            borderRadius: 7
+                                        }}
+                                    >
                                         <Text style={{ fontSize: 20 }}>Humdity</Text>
-                                        <Text style={{ fontSize: 50 }}>{data.current['humidity']}%</Text>
+                                        <Text style={{ fontSize: 40 }}>{data.current['humidity']}%</Text>
                                     </View>
-                                    <View style={{ width: "50%" }}>
-                                        <Text style={{ fontSize: 20 }}>Feel like</Text>
-                                        <Text style={{ fontSize: 50 }}>{data.current['feelslike_c']}&deg;C</Text>
+                                    <View
+                                        style={{
+                                            width: "48%",
+                                            backgroundColor: "#7CFC00",
+                                            padding: 5,
+                                            margin: 3,
+                                            borderRadius: 7
+                                        }}
+                                    >
+                                        <Text style={{ fontSize: 20 }}>Feels like</Text>
+                                        <Text style={{ fontSize: 40 }}>{data.current['feelslike_c']}&deg;C</Text>
                                     </View>
-                                    <View style={{ width: "50%" }}>
+                                    <View
+                                        style={{
+                                            width: "48%",
+                                            backgroundColor: "#7CFC00",
+                                            padding: 5,
+                                            margin: 3,
+                                            borderRadius: 7
+                                        }}
+                                    >
                                         <Text style={{ fontSize: 20 }}>Wind</Text>
                                         <Text style={{ fontSize: 50 }}>{data.current['wind_kph']}</Text>
                                     </View>
-                                    <View style={{ width: "50%" }}>
+                                    <View
+                                        style={{
+                                            width: "48%",
+                                            backgroundColor: "#7CFC00",
+                                            padding: 5,
+                                            margin: 3,
+                                            borderRadius: 7
+                                        }}
+                                    >
                                         <Text style={{ fontSize: 20 }}>Cloud</Text>
                                         <Text style={{ fontSize: 50 }}>{data.current['cloud']}%</Text>
                                     </View>
@@ -97,52 +129,64 @@ function Home({ navigation }: { navigation: any }) {
                 <View style={styles.forecast_area}>
                     <Text style={{ margin: 10 }}>Daily forcast</Text>
                     <View style={styles.daily_forecast}>
-
                         {data.forecast && data.forecast.forecastday.map((day: { date: string; astro: { sunrise: string; sunset: string }; day: { maxtemp_c: string; mintemp_c: string, condition: { text: string, icon: string } }; }) => {
 
                             let date = new Date(day.date);
                             let options: Intl.DateTimeFormatOptions = { weekday: 'long' };
                             let dayname = date.toLocaleDateString('en-US', options);
-                            let max_t = parseInt(day.day.maxtemp_c)
-                            let min_t = parseInt(day.day.mintemp_c)
+                            let max_t = parseInt(day.day.maxtemp_c);
+                            let min_t = parseInt(day.day.mintemp_c);
                             return (
-                               <DailyCard
-                                Key={day.date}
-                                DayName={dayname}
-                                Img={day.day.condition.icon}
-                                Condition={day.day.condition.text}
-                                MaxT={max_t}
-                                MinT={min_t}
-                                SunRise={day.astro.sunrise}
-                                SunSet={day.astro.sunset}
-                               />
+                                <DailyCard
+                                    Key={day.date}
+                                    DayName={dayname}
+                                    Img={day.day.condition.icon}
+                                    Condition={day.day.condition.text}
+                                    MaxT={max_t}
+                                    MinT={min_t}
+                                    SunRise={day.astro.sunrise}
+                                    SunSet={day.astro.sunset}
+                                />
                             )
                         })}
                     </View>
                 </View>
                 <View style={styles.forecast_area}>
                     <Text style={{ margin: 10 }}>Hourly Forecast</Text>
-                    <ScrollView horizontal={true}>
+                    <ScrollView horizontal={true} style={{ marginLeft: 5, marginRight: 10, marginBottom:5 }}>
                         {data && data.location && data.forecast && data.forecast.forecastday ? (
-                            data.forecast.forecastday[0].hour.map((item: any) => {
+                            data.forecast.forecastday[0].hour
+                                .filter((item:any) => {
+                                    // Calculate the current time
+                                    const now = new Date();
+                                    const currentHour = now.getHours();
+                                    const currentMinute = now.getMinutes();
 
-                                const now = data.location.laoca
-                                const date = new Date(item.time_epoch * 1000);
-                                const hour = date.getHours();
-                                const minute =  date.getMinutes();
-                                return (
-                                    <HourlyCard
-                                    Key={item.time}
-                                    Hour={hour}
-                                    Minute={minute}
-                                    Img={item.condition.icon}
-                                    Rain={item.chance_of_rain}
-                                    Temp={item.temp_c}
-                                    />
-                                )
-                            })
+                                    // Parse the time from the item
+                                    const date = new Date(item.time_epoch * 1000);
+                                    const hour = date.getHours();
+                                    const minute = date.getMinutes();
+
+                                    // Filter and only display data for times greater than or equal to the current time
+                                    return hour >= currentHour || (hour === currentHour && minute >= currentMinute);
+                                })
+                                .map((item:any) => {
+                                    const date = new Date(item.time_epoch * 1000);
+                                    const hour = date.getHours();
+                                    const minute = date.getMinutes();
+                                    return (
+                                        <HourlyCard
+                                            Key={item.time}
+                                            Hour={hour}
+                                            Minute={minute}
+                                            Img={item.condition.icon}
+                                            Rain={item.chance_of_rain}
+                                            Temp={item.temp_c}
+                                        />
+                                    );
+                                })
                         ) : (
-                            <Text style={{margin:100}}>Loading...</Text>
+                            <Text style={{ margin: 100 }}>Loading...</Text>
                         )}
                     </ScrollView>
                 </View>
@@ -150,6 +194,9 @@ function Home({ navigation }: { navigation: any }) {
         </ScrollView>
     );
 }
+
+
+
 const styles = StyleSheet.create({
     main_area: {
         backgroundColor: "#cce6ff",
@@ -168,7 +215,7 @@ const styles = StyleSheet.create({
         flexWrap: "wrap",
         backgroundColor: "#e6ffcc",
         margin: 10,
-        padding: 15,
+        padding: 5,
         borderRadius: 13
     },
     forecast_area: {
@@ -178,8 +225,8 @@ const styles = StyleSheet.create({
     },
     daily_forecast: {
         display: "flex",
-        justifyContent:"flex-start",
-      
+        justifyContent: "flex-start",
+
         flexDirection: "row",
 
     },
