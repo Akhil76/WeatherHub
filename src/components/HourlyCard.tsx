@@ -5,8 +5,8 @@ import {View,Text,Image,StyleSheet} from 'react-native';
 
 interface CardProps {
     Key:string;
-    Hour:number;
-    Minute:number;
+    Hour:number | string;
+    Minute:number | string;
     Img:string;
     Rain:number;
     Temp:number;

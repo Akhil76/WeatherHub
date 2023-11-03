@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 function Search({navigation}:{navigation:any}) {
     var [city, onChangeText] = React.useState('');
     var [data, setData] = useState(Object);
+    
     useEffect(() => {
         fetch(`https://api.weatherapi.com/v1/current.json?key=${ApiKey}&q=${city}&aqi=no`)
             .then(res => res.json())
@@ -14,6 +15,7 @@ function Search({navigation}:{navigation:any}) {
             //.then(res => console.log(res))
             .catch(err => console.log(err))
     }, [city]);
+
     const saveLocation = async () => {
         
         try {
@@ -39,13 +41,14 @@ function Search({navigation}:{navigation:any}) {
             <View>
                 {data.location && (
                     <Pressable onPress={saveLocation}>
-                        <Text style={{
+                        <Text 
+                        style={{
                              fontSize: 20,
                              backgroundColor:"#00bfff",
                              height:60,
                              padding:15
                              }}
-                             >{data.location['name']},{data.location['country']}</Text>
+                        >{data.location['name']},{data.location['country']}</Text>
                     </Pressable>
                 )}
             </View>
