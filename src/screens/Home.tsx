@@ -11,11 +11,10 @@ import TempCard from '../components/TempCard';
 import { useRoute } from '@react-navigation/native';
 
 
-
-interface Props {
-    navigation: any;
-
-}
+   
+    interface Props {
+        navigation: any;
+    }
 
 function Home({ navigation}: Props) {
     var [data, setData] = useState(Object);
@@ -26,30 +25,52 @@ function Home({ navigation}: Props) {
     //console.log(city.params);
     console.log(location);
     console.log(localData);
+    
     useEffect(() => {
         // Retrieve data from AsyncStorage
-        AsyncStorage.getItem('locationName')
-            .then((result) => {
-                setLocation(result);
-            })
-            .catch((error) => {
-                console.log('Error retrieving location:', error);
-            });
-        // Weather api call and data fetch
-        fetch(`https://api.weatherapi.com/v1/forecast.json?key=${ApiKey}&q=${location}&days=3&aqi=no&alerts=no`)
-            .then(res => res.json())
-            .then(res => setData(res))
-            //.then(res => console.log(res))
-            .catch(err => console.log(err))
-            // After fetching data and setting data state
-        AsyncStorage.setItem('weatherData', JSON.stringify(data))
-        .then(() => {
-            console.log('Weather data saved to local storage.');
-        })
-        .catch((error) => {
-            console.log('Error saving weather data:', error);
-        });
-
+        // AsyncStorage.getItem('locationName')
+        //     .then((result) => {
+        //         setLocation(result);
+        //     })
+        //     .catch((error) => {
+        //         console.log('Error retrieving location:', error);
+        //     });
+        // // Weather api call and data fetch
+        // fetch(`https://api.weatherapi.com/v1/forecast.json?key=${ApiKey}&q=${location}&days=3&aqi=no&alerts=no`)
+        //     .then(res => res.json())
+        //     .then(res => setData(res))
+        //     //.then(res => console.log(res))
+        //     .catch(err => console.log(err))
+        //     // After fetching data and setting data state
+        // AsyncStorage.setItem('weatherData', JSON.stringify(data))
+        // .then(() => {
+        //     console.log('Weather data saved to local storage.');
+        // })
+        // .catch((error) => {
+        //     console.log('Error saving weather data:', error);
+        // });
+        const fetchData = async () => {
+            try {
+              const savedLocation = await AsyncStorage.getItem('locationName');
+              setLocation(savedLocation);
+      
+              if (savedLocation) {
+                const response = await fetch(
+                  `https://api.weatherapi.com/v1/forecast.json?key=${ApiKey}&q=${savedLocation}&days=3&aqi=no&alerts=no`
+                );
+                const weatherData = await response.json();
+                setData(weatherData);
+      
+                await AsyncStorage.setItem('weatherData', JSON.stringify(weatherData));
+                console.log('Weather data saved to local storage.');
+              }
+            } catch (error) {
+              console.log('Error:', error);
+            }
+            setRefreshing(false);
+          };
+      
+          fetchData();
         loadSavedWeatherData();
         setRefreshing(false);
     },[city.params,location]);
@@ -69,7 +90,8 @@ function Home({ navigation}: Props) {
                 console.log(err);
                 setRefreshing(false); // Stop the refreshing spinner on error
             });
-    }, [location]);
+            
+    }, [location,city.params]);
 
     const loadSavedWeatherData = async () => {
         try {
@@ -97,7 +119,7 @@ function Home({ navigation}: Props) {
                         />
                     )}
                     <View>
-                        <View >
+                        <View>
                             {
                                 data.location && data.current && (
                                     <View>
@@ -114,7 +136,8 @@ function Home({ navigation}: Props) {
                                             <Card Name="Cloud" Condition={data.current['cloud']} Symbol={"%"} />
                                         </View>
                                     </View>
-                                )}
+                                )
+                            }
                         </View>
                         <View style={styles.forecast_area}>
                             <Text style={{ margin: 10 }}>Daily forcast</Text>
@@ -220,7 +243,7 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(255, 255, 255, 0.2)",
         margin: 10,
         padding: 5,
-        borderRadius: 13
+        borderRadius:13
     },
     forecast_area: {
         backgroundColor: "rgba(255, 255, 255, 0.2)",
