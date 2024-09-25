@@ -8,9 +8,10 @@ interface CardProps {
     Condition:string;
     Temp:number;
     LocalTime:string;
+    lastupdate:string;
 }
 
-function TempCard({Img,Condition,Temp,LocalTime}: CardProps) {
+function TempCard({Img,Condition,Temp,LocalTime,lastupdate}: CardProps) {
 
     return (
 
@@ -24,6 +25,7 @@ function TempCard({Img,Condition,Temp,LocalTime}: CardProps) {
             <Text style={{ fontSize: 20 }}>{Condition}</Text>
             <Text style={{ fontSize: 80 }}>{Temp} &deg;</Text>
             <Text style={{ fontSize: 20 }}>{LocalTime}</Text>
+            <Text style={{ fontSize: 20 }}>{lastupdate}</Text>
         </View>
 
     );

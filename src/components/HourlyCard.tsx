@@ -1,5 +1,6 @@
 import React from 'react';
 import {View,Text,Image,StyleSheet} from 'react-native';
+import { Directions } from 'react-native-gesture-handler';
 
 
 
@@ -18,7 +19,7 @@ function HourlyCard ({Key,Img,Rain,Temp,Hour,Minute}:CardProps){
   return (
     <View style={{
         flex:1,
-        backgroundColor:"#7CFC00",
+        backgroundColor:"#backgroundColor: rgba(255, 255, 255, 0.2)",
         margin: 3,
         padding:5,
         borderRadius:10,
@@ -26,7 +27,7 @@ function HourlyCard ({Key,Img,Rain,Temp,Hour,Minute}:CardProps){
     }}
         key={Key}
     >
-        <Text>{Hour}:{Minute}</Text>
+        <Text>{Hour}{Minute}</Text>
         <Image
             style={styles.tinyLogo}
             source={{

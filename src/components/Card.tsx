@@ -15,14 +15,16 @@ function Card({ Name,Condition,Symbol }: CardProps) {
         <View
             style={{
                 width: "48%",
-                backgroundColor: "#7CFC00",
+                backgroundColor: "#backgroundColor: rgba(255, 255, 255, 0.2)",
                 padding: 5,
                 margin: 3,
                 borderRadius: 7
             }}
         >
-            <Text style={{ fontSize: 20 }}>{Name}</Text>
-            <Text style={{ fontSize: 40 }}>{Condition}{Symbol}</Text>
+            <View style={{margin:5}}>
+                <Text style={{ fontSize: 20 }}>{Name}</Text>
+                <Text style={{ fontSize: 40 }}>{Condition}{Symbol}</Text>
+            </View>
         </View>
     );
 }

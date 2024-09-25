@@ -12,9 +12,9 @@ import { useRoute } from '@react-navigation/native';
 
 
    
-    interface Props {
-        navigation: any;
-    }
+interface Props {
+    navigation: any;
+}
 
 function Home({ navigation}: Props) {
     var [data, setData] = useState(Object);
@@ -23,88 +23,54 @@ function Home({ navigation}: Props) {
     const [refreshing, setRefreshing] = useState(false);
     const city = useRoute();
     //console.log(city.params);
-    console.log(location);
-    console.log(localData);
-    
+   // console.log(localData);
+    //console.log(location);
+    const url = `https://api.weatherapi.com/v1/forecast.json?key=${ApiKey}&q=${location}&days=7&aqi=no&alerts=no`
+    const fetchLocation = async()=>{
+        const savedLocation = await AsyncStorage.getItem('locationName');
+        setLocation(savedLocation);
+    };
+
+    const fetchData = async()=>{
+        console.log(location);
+        const results = await fetch(url);
+        const weatherData = await results.json();
+        //setData(weatherData);
+        await AsyncStorage.setItem('weatherData', JSON.stringify(weatherData));
+        //console.log('Weather data saved to local storage.');
+        //const savedData = await AsyncStorage.getItem('weatherData');
+        // if (savedData !== null && weatherData == null) {
+        //     const parsedData = JSON.parse(savedData);
+        //     setData(parsedData);
+        //     console.log('Loaded weather data from local storage.');
+        // }
+        //console.log(savedData)
+    };
+    const fetchSavedData = async()=>{
+        const savedData = await AsyncStorage.getItem('weatherData');
+        if (savedData !== null) {
+                 const parsedData = JSON.parse(savedData);
+                 setData(parsedData);
+                 console.log('Loaded weather data from local storage.');
+             }
+        console.log("Getting saved data.");
+    }
     useEffect(() => {
-        // Retrieve data from AsyncStorage
-        // AsyncStorage.getItem('locationName')
-        //     .then((result) => {
-        //         setLocation(result);
-        //     })
-        //     .catch((error) => {
-        //         console.log('Error retrieving location:', error);
-        //     });
-        // // Weather api call and data fetch
-        // fetch(`https://api.weatherapi.com/v1/forecast.json?key=${ApiKey}&q=${location}&days=3&aqi=no&alerts=no`)
-        //     .then(res => res.json())
-        //     .then(res => setData(res))
-        //     //.then(res => console.log(res))
-        //     .catch(err => console.log(err))
-        //     // After fetching data and setting data state
-        // AsyncStorage.setItem('weatherData', JSON.stringify(data))
-        // .then(() => {
-        //     console.log('Weather data saved to local storage.');
-        // })
-        // .catch((error) => {
-        //     console.log('Error saving weather data:', error);
-        // });
-        const fetchData = async () => {
-            try {
-              const savedLocation = await AsyncStorage.getItem('locationName');
-              setLocation(savedLocation);
-      
-              if (savedLocation) {
-                const response = await fetch(
-                  `https://api.weatherapi.com/v1/forecast.json?key=${ApiKey}&q=${savedLocation}&days=3&aqi=no&alerts=no`
-                );
-                const weatherData = await response.json();
-                setData(weatherData);
-      
-                await AsyncStorage.setItem('weatherData', JSON.stringify(weatherData));
-                console.log('Weather data saved to local storage.');
-              }
-            } catch (error) {
-              console.log('Error:', error);
-            }
-            setRefreshing(false);
-          };
-      
-          fetchData();
-        loadSavedWeatherData();
-        setRefreshing(false);
-    },[city.params,location]);
+        fetchLocation();
+        fetchData();
+        fetchSavedData()
+       //loadSavedWeatherData();
+       //setRefreshing(false);
+    },[location,city.params]);
     
     const onRefresh = useCallback(() => {
+        fetchLocation();
+        fetchData();
+        fetchSavedData()
+        console.log('Refreshing...'); // Add this line for debugging  
+    },[location,city.params]);
 
-
-        setRefreshing(true); // Start the refreshing spinner
-
-        fetch(`https://api.weatherapi.com/v1/forecast.json?key=${ApiKey}&q=${location}&days=3&aqi=no&alerts=no`)
-            .then((res) => res.json())
-            .then((res) => {
-                setData(res);
-                setRefreshing(false); // Stop the refreshing spinner when data is received
-            })
-            .catch((err) => {
-                console.log(err);
-                setRefreshing(false); // Stop the refreshing spinner on error
-            });
-            
-    }, [location,city.params]);
-
-    const loadSavedWeatherData = async () => {
-        try {
-            const savedData = await AsyncStorage.getItem('weatherData');
-            if (savedData !== null && data == null) {
-                const parsedData = JSON.parse(savedData);
-                setData(parsedData);
-                console.log('Loaded weather data from local storage.');
-            }
-        } catch (error) {
-            console.log('Error loading weather data:', error);
-        }
-    };
+   
     
     return (
         <FlatList
@@ -128,6 +94,7 @@ function Home({ navigation}: Props) {
                                             Condition={data.current['condition']['text']}
                                             Temp={data.current['temp_c']}
                                             LocalTime={data.location['localtime']}
+                                            lastupdate={data.current['last_updated']}
                                         />
                                         <View style={styles.weather_widget}>
                                             <Card Name="Feels like" Condition={data.current['feelslike_c']} Symbol={"°c"} />
@@ -140,8 +107,9 @@ function Home({ navigation}: Props) {
                             }
                         </View>
                         <View style={styles.forecast_area}>
-                            <Text style={{ margin: 10 }}>Daily forcast</Text>
+                            <Text style={{ margin:10,color:"#00ff00",fontWeight:"bold" }}>Daily forcast</Text>
                             <View style={styles.daily_forecast}>
+                                
                                 {data.forecast && data.forecast.forecastday.map((day: { date: string; astro: { sunrise: string; sunset: string }; day: { maxtemp_c: string; mintemp_c: string, condition: { text: string, icon: string } }; }) => {
 
                                     let date = new Date(day.date);
@@ -165,7 +133,7 @@ function Home({ navigation}: Props) {
                             </View>
                         </View>
                         <View style={styles.forecast_area}>
-                            <Text style={{ margin: 10 }}>Hourly Forecast</Text>
+                            <Text style={{ margin: 10,color:"#00ff00",fontWeight:"bold"}}>Hourly Forecast</Text>
                             <ScrollView horizontal={true} style={{ marginLeft: 5, marginRight: 10, marginBottom: 5 }}>
                                 {data && data.location && data.forecast && data.forecast.forecastday ? (
                                     data.forecast.forecastday[0].hour.map((item: any, index: any) => {
@@ -199,7 +167,7 @@ function Home({ navigation}: Props) {
                                                 <HourlyCard
                                                     Key={item.time}
                                                     Hour={hour}
-                                                    Minute={minute}
+                                                    Minute=""
                                                     Img={item.condition.icon}
                                                     Rain={item.chance_of_rain}
                                                     Temp={Temp}
@@ -233,7 +201,7 @@ function Home({ navigation}: Props) {
 
 const styles = StyleSheet.create({
     main_area: {
-        backgroundColor: "#008000",
+        backgroundColor: "#0576f0",
         height: "100%"
     },
     weather_widget: {
