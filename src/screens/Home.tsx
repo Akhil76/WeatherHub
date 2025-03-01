@@ -26,6 +26,7 @@ function Home({ navigation}: Props) {
    // console.log(localData);
     //console.log(location);
     const url = `https://api.weatherapi.com/v1/forecast.json?key=${ApiKey}&q=${location}&days=7&aqi=no&alerts=no`
+    
     const fetchLocation = async()=>{
         const savedLocation = await AsyncStorage.getItem('locationName');
         setLocation(savedLocation);
@@ -33,9 +34,10 @@ function Home({ navigation}: Props) {
 
     const fetchData = async()=>{
         console.log(location);
+    
         const results = await fetch(url);
         const weatherData = await results.json();
-        //setData(weatherData);
+        setData(weatherData);
         await AsyncStorage.setItem('weatherData', JSON.stringify(weatherData));
         //console.log('Weather data saved to local storage.');
         //const savedData = await AsyncStorage.getItem('weatherData');
@@ -50,7 +52,7 @@ function Home({ navigation}: Props) {
         const savedData = await AsyncStorage.getItem('weatherData');
         if (savedData !== null) {
                  const parsedData = JSON.parse(savedData);
-                 setData(parsedData);
+                 setLocalData(parsedData);
                  console.log('Loaded weather data from local storage.');
              }
         console.log("Getting saved data.");
@@ -86,6 +88,9 @@ function Home({ navigation}: Props) {
                     )}
                     <View>
                         <View>
+                            <View>
+                                <Text>City:{location}</Text>
+                            </View> 
                             {
                                 data.location && data.current && (
                                     <View>
@@ -102,6 +107,7 @@ function Home({ navigation}: Props) {
                                             <Card Name="Wind" Condition={data.current['wind_kph']} Symbol={""} />
                                             <Card Name="Cloud" Condition={data.current['cloud']} Symbol={"%"} />
                                         </View>
+                                       
                                     </View>
                                 )
                             }

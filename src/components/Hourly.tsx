@@ -14,7 +14,7 @@ function Hourly({ Title,loc, dateData }: Props) {
     var [data, setData] = useState(Object);
     useEffect(() => {
         // Retrieve data from AsyncStorage
-       
+
         // Weather api call and data fetch
         fetch(`https://api.weatherapi.com/v1/forecast.json?key=${ApiKey}&q=${loc}&days=1&aqi=no&alerts=no`)
             .then(res => res.json())
