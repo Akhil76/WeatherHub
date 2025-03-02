@@ -70,6 +70,42 @@ function Search({ navigation }: { navigation: any }) {
             console.log('Loaded location data from local storage.');
         }
         console.log("Getting saved data.");
+
+    }
+    const saveLocation = async (location: string) => {
+        try{
+             // Save single city location to AsyncStorage
+             await AsyncStorage.setItem('locationName', location);
+
+
+             // Retrieve existing cities from AsyncStorage
+             const storedCities = await AsyncStorage.getItem('locations');
+             let citiesArray = storedCities ? JSON.parse(storedCities) : [];
+
+             // Check if city already exists (optional) and add new city
+             if (!citiesArray.includes(location)) {
+                 citiesArray.push(location);
+             }
+
+             // Save updated cities array back to AsyncStorage
+             await AsyncStorage.setItem('locations', JSON.stringify(citiesArray));
+             // Navigate to Home screen with updated list
+             await navigation.navigate('Home', location);
+        }catch(error){
+            console.log('Error saving location:', error);
+        }
+    }
+    const selectSavedLocation = async (location: string) => {
+        try{
+             // Save location to AsyncStorage
+             await AsyncStorage.setItem('locationName', location);
+
+             // Navigate to Home screen with updated list
+             await navigation.navigate('Home', location);
+             // Retrieve existing cities from AsyncStorage
+        }catch(error){
+            console.log('Error saving location:', error);
+        }
     }
     const deleteLocation = async (locationToRemove: string) => {
         try {
@@ -102,40 +138,17 @@ function Search({ navigation }: { navigation: any }) {
                     value={city}
                 />
             </View>
-            <View>
+            {/* <View>
                 <Pressable>
                     <Text>{status}</Text>
                 </Pressable>
-            </View>
+            </View> */}
             <View>
                 {data.location && (
 
                     <Pressable
                         style={styles.listItem}
-                        onPress={async () => {
-                            try {
-                                // Save single city location to AsyncStorage
-                                await AsyncStorage.setItem('locationName', data.location['name']);
-
-
-                                // Retrieve existing cities from AsyncStorage
-                                const storedCities = await AsyncStorage.getItem('locations');
-                                let citiesArray = storedCities ? JSON.parse(storedCities) : [];
-
-                                // Check if city already exists (optional) and add new city
-                                if (!citiesArray.includes(data.location['name'])) {
-                                    citiesArray.push(data.location['name']);
-                                }
-
-                                // Save updated cities array back to AsyncStorage
-                                await AsyncStorage.setItem('locations', JSON.stringify(citiesArray));
-                                // Navigate to Home screen with updated list
-                                await navigation.navigate('Home', data.location['name']);
-
-                            } catch (error) {
-                                console.log('Error saving location:', error);
-                            }
-                        }}>
+                        onPress={async () =>saveLocation(data.location['name'])}>
                         <Text
                             style={{
                                 fontSize: 20,
@@ -152,20 +165,8 @@ function Search({ navigation }: { navigation: any }) {
                 {locations && locations.map((location: any) => (
                     <View key={location} style={styles.listItem}>
                         <Pressable
-
-                            onPress={async () => {
-                                try {
-                                    // Save location to AsyncStorage
-                                    await AsyncStorage.setItem('locationName', location);
-
-                                    // Navigate to Home screen with updated list
-                                    await navigation.navigate('Home', location);
-                                    // Retrieve existing cities from AsyncStorage
-
-                                } catch (error) {
-                                    console.log('Error saving location:', error);
-                                }
-                            }}>
+                            onPress={async () => selectSavedLocation(location)}
+                            >
                             <Text
                                 style={{
                                     fontSize: 20,
@@ -191,7 +192,8 @@ function Search({ navigation }: { navigation: any }) {
 
 const styles = StyleSheet.create({
     input: {
-        height: 40,
+        height: 50,
+        borderRadius: 10,
         margin: 12,
         borderWidth: 1,
         padding: 10,
