@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { TextInput, Text, View, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { TextInput, Text, View, StyleSheet, ScrollView,Image, Pressable } from 'react-native';
 import { ApiKey } from '../OpenApiKey';
 import PressableButton from '../components/PressableButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -29,39 +29,7 @@ function Search({ navigation }: { navigation: any }) {
         }
 
     };
-    // const saveLocation = async () => {
-
-    //     try {
-    //         await AsyncStorage.setItem('locationName', city);
-    //         await navigation.navigate('Home',city);
-
-    //     } catch (error) {
-    //         console.log('Error saving location:', error);
-    //     }
-    // };
-    // const saveLocation = async () => {
-    //     try {
-    //         await AsyncStorage.setItem('locationName', city);
-    //         // Retrieve existing cities from AsyncStorage
-    //         const storedCities = await AsyncStorage.getItem('locations');
-    //         let citiesArray = storedCities ? JSON.parse(storedCities) : [];
-
-    //         // Check if city already exists (optional)
-    //         if (!citiesArray.includes(city)) {
-    //             citiesArray.push(city);
-    //         }
-
-    //         // Save updated cities array back to AsyncStorage
-    //         await AsyncStorage.setItem('locations', JSON.stringify(citiesArray));
-
-    //         // Navigate to Home screen with updated list
-    //         await navigation.navigate('Home',city);
-
-
-    //     } catch (error) {
-    //         console.log('Error saving location:', error);
-    //     }
-    // };
+    
     const fetchSavedLocations = async () => {
         const locations = await AsyncStorage.getItem('locations');
         if (locations !== null) {
@@ -147,16 +115,20 @@ function Search({ navigation }: { navigation: any }) {
                 {data.location && (
 
                     <Pressable
-                        style={styles.listItem}
+                        style={styles.searchedItem}
                         onPress={async () =>saveLocation(data.location['name'])}>
                         <Text
                             style={{
                                 fontSize: 20,
-                                backgroundColor: "#00bfff",
                                 height: 60,
                                 padding: 15
                             }}
-                        >{data.location['name']},{data.location['country']}         {data.current['temp_c']}°c</Text>
+                        >{data.location['name']},{data.location['country']}</Text>
+                        <Text style={{
+                            fontSize: 20,
+                            height: 60,
+                            padding: 15
+                        }}>{data.current['temp_c']}°c</Text>
                     </Pressable>
 
                 )}
@@ -170,18 +142,16 @@ function Search({ navigation }: { navigation: any }) {
                             <Text
                                 style={{
                                     fontSize: 20,
-                                   
                                     height: 60,
                                     padding: 15
                                 }}
                             >{location}</Text>
                         </Pressable>
                         <Pressable onPress={() => deleteLocation(location)}>
-                            <Text style={{
-                                fontSize: 20,
-                                color: 'red',
-                                marginLeft: 10
-                            }}>✖</Text>
+                            <Image
+                                source={require('../Icon/delete-button.png')}
+                                style={{ width: 35, height: 35,marginTop:10 }}
+                            />
                         </Pressable>
                     </View>
                 ))}
@@ -200,10 +170,18 @@ const styles = StyleSheet.create({
     },
     listItem: {
         flexDirection: 'row',
-        alignItems: 'center', 
+        justifyContent: 'space-between',
         padding: 10,
         margin: 2,
         backgroundColor: '#00bfff',
+        borderRadius: 10,
+    },
+    searchedItem: {
+        flexDirection: 'row',
+        justifyContent: 'space-between', 
+        padding: 10,
+        margin: 2,
+        backgroundColor: '#d5ff33',
         borderRadius: 10,
     },
 

@@ -25,17 +25,18 @@ function Home({ navigation}: Props) {
     //console.log(city.params);
    // console.log(localData);
     //console.log(location);
-    const url = `https://api.weatherapi.com/v1/forecast.json?key=${ApiKey}&q=${location}&days=7&aqi=no&alerts=no`
     
     const fetchLocation = async()=>{
         const savedLocation = await AsyncStorage.getItem('locationName');
         setLocation(savedLocation);
     };
 
-    const fetchData = async()=>{
-        console.log(location);
     
-        const results = await fetch(url);
+    
+    const fetchData = async()=>{
+        
+       try{
+        const results = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${ApiKey}&q=${location}&days=7&aqi=no&alerts=no`);
         const weatherData = await results.json();
         setData(weatherData);
         await AsyncStorage.setItem('weatherData', JSON.stringify(weatherData));
@@ -47,6 +48,9 @@ function Home({ navigation}: Props) {
         //     console.log('Loaded weather data from local storage.');
         // }
         //console.log(savedData)
+       }catch(error){
+           console.log(error);
+       }
     };
     const fetchSavedData = async()=>{
         const savedData = await AsyncStorage.getItem('weatherData');
@@ -88,9 +92,9 @@ function Home({ navigation}: Props) {
                     )}
                     <View>
                         <View>
-                            <View>
+                            {/* <View>
                                 <Text>City:{location}</Text>
-                            </View> 
+                            </View>  */}
                             {
                                 data.location && data.current && (
                                     <View>
