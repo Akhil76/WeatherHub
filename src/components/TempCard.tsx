@@ -23,7 +23,7 @@ function TempCard({Img,Condition,Temp,LocalTime,lastupdate}: CardProps) {
                 }}
             />
             <Text style={{ fontSize: 20 }}>{Condition}</Text>
-            <Text style={{ fontSize: 80 }}>{Temp} &deg;</Text>
+            <Text style={{ fontSize: 120,color:"white" }}>{Temp}°</Text>
             <Text style={{ fontSize: 20 }}>{LocalTime}</Text>
             <Text style={{ fontSize: 20 }}>{lastupdate}</Text>
         </View>

@@ -19,11 +19,11 @@ interface Props {
 function Home({ navigation}: Props) {
     var [data, setData] = useState(Object);
     var [localData, setLocalData] = useState(Object);
-    const [location, setLocation] = useState<string | null>(null);
+    const [location, setLocation] = useState<string | null>("Dhaka");
     const [refreshing, setRefreshing] = useState(false);
     const city = useRoute();
     //console.log(city.params);
-   // console.log(localData);
+    // console.log(localData);
     //console.log(location);
     
     const fetchLocation = async()=>{
@@ -62,9 +62,10 @@ function Home({ navigation}: Props) {
         console.log("Getting saved data.");
     }
     useEffect(() => {
+        
         fetchLocation();
         fetchData();
-        fetchSavedData()
+        fetchSavedData();
        //loadSavedWeatherData();
        //setRefreshing(false);
     },[location,city.params]);
@@ -75,7 +76,22 @@ function Home({ navigation}: Props) {
         fetchSavedData()
         console.log('Refreshing...'); // Add this line for debugging  
     },[location,city.params]);
+    // Function to get relative time
+const getRelativeTime = (lastUpdated: string) => {
+    const lastUpdateDate = new Date(lastUpdated);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - lastUpdateDate.getTime()) / 1000);
 
+    if (diffInSeconds < 60) {
+        return `${diffInSeconds} seconds ago`;
+    } else if (diffInSeconds < 3600) {
+        return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    } else if (diffInSeconds < 86400) {
+        return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    } else {
+        return `${Math.floor(diffInSeconds / 86400)} days ago`;
+    }
+};
    
     
     return (
@@ -95,20 +111,22 @@ function Home({ navigation}: Props) {
                             {/* <View>
                                 <Text>City:{location}</Text>
                             </View>  */}
-                            {
+                            {           
+
                                 data.location && data.current && (
+                                    
                                     <View>
                                         <TempCard
                                             Img={data.current['condition']['icon']}
                                             Condition={data.current['condition']['text']}
-                                            Temp={data.current['temp_c']}
-                                            LocalTime={data.location['localtime']}
-                                            lastupdate={data.current['last_updated']}
+                                            Temp={parseInt(data.current['temp_c'])} // Convert string to int number
+                                            lastupdate={getRelativeTime(data.current.last_updated)}
+                                            LocalTime={""}
                                         />
                                         <View style={styles.weather_widget}>
-                                            <Card Name="Feels like" Condition={data.current['feelslike_c']} Symbol={"°c"} />
+                                            <Card Name="Feels like" Condition={parseInt(data.current['feelslike_c'])} Symbol={"°c"} />
                                             <Card Name="Humdity" Condition={data.current['humidity']} Symbol={"%"} />
-                                            <Card Name="Wind" Condition={data.current['wind_kph']} Symbol={""} />
+                                            <Card Name="Wind" Condition={parseInt(data.current['wind_kph'])} Symbol={""} />
                                             <Card Name="Cloud" Condition={data.current['cloud']} Symbol={"%"} />
                                         </View>
                                        
