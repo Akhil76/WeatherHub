@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
 
 
 
@@ -12,19 +12,22 @@ interface CardProps {
     SunSet: string;
     MaxT: number;
     MinT: number;
+    navigation: any;
 }
 
-function DailyCard({ Key, DayName, Img, Condition, SunRise, SunSet, MaxT, MinT }: CardProps) {
+function DailyCard({ Key, DayName, Img, Condition, SunRise, SunSet, MaxT, MinT,navigation }: CardProps) {
 
     return (
-        <View style={{
+        <Pressable 
+        style={{
             width: "30%",
             backgroundColor:"#backgroundColor: rgba(255, 255, 255, 0.2)",
             margin: 5,
             padding: 5,
             borderRadius: 10,
-        }}
-            key={Key}
+        }}   
+        key={Key}
+        onPress={() => navigation.navigate('Daily')}
         >
             <View style={{margin:5}}>
                 <Text>{DayName}</Text>
@@ -40,7 +43,7 @@ function DailyCard({ Key, DayName, Img, Condition, SunRise, SunSet, MaxT, MinT }
                 <Text>Sunset:{SunSet}</Text>
                 {/* Add more forecast data as needed */}
             </View>
-        </View>
+        </Pressable>
     );
 }
 
