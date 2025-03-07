@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { TextInput, Text, View, StyleSheet, ScrollView,Image, Pressable } from 'react-native';
+import { TextInput, Text, View, StyleSheet, ScrollView, Image, Pressable } from 'react-native';
 import { ApiKey } from '../OpenApiKey';
 import PressableButton from '../components/PressableButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -29,7 +29,7 @@ function Search({ navigation }: { navigation: any }) {
         }
 
     };
-    
+
     const fetchSavedLocations = async () => {
         const locations = await AsyncStorage.getItem('locations');
         if (locations !== null) {
@@ -41,37 +41,37 @@ function Search({ navigation }: { navigation: any }) {
 
     }
     const saveLocation = async (location: string) => {
-        try{
-             // Save single city location to AsyncStorage
-             await AsyncStorage.setItem('locationName', location);
+        try {
+            // Save single city location to AsyncStorage
+            await AsyncStorage.setItem('locationName', location);
 
 
-             // Retrieve existing cities from AsyncStorage
-             const storedCities = await AsyncStorage.getItem('locations');
-             let citiesArray = storedCities ? JSON.parse(storedCities) : [];
+            // Retrieve existing cities from AsyncStorage
+            const storedCities = await AsyncStorage.getItem('locations');
+            let citiesArray = storedCities ? JSON.parse(storedCities) : [];
 
-             // Check if city already exists (optional) and add new city
-             if (!citiesArray.includes(location)) {
-                 citiesArray.push(location);
-             }
+            // Check if city already exists (optional) and add new city
+            if (!citiesArray.includes(location)) {
+                citiesArray.push(location);
+            }
 
-             // Save updated cities array back to AsyncStorage
-             await AsyncStorage.setItem('locations', JSON.stringify(citiesArray));
-             // Navigate to Home screen with updated list
-             await navigation.navigate('Home', location);
-        }catch(error){
+            // Save updated cities array back to AsyncStorage
+            await AsyncStorage.setItem('locations', JSON.stringify(citiesArray));
+            // Navigate to Home screen with updated list
+            await navigation.navigate('Home', location);
+        } catch (error) {
             console.log('Error saving location:', error);
         }
     }
     const selectSavedLocation = async (location: string) => {
-        try{
-             // Save location to AsyncStorage
-             await AsyncStorage.setItem('locationName', location);
+        try {
+            // Save location to AsyncStorage
+            await AsyncStorage.setItem('locationName', location);
 
-             // Navigate to Home screen with updated list
-             await navigation.navigate('Home', location);
-             // Retrieve existing cities from AsyncStorage
-        }catch(error){
+            // Navigate to Home screen with updated list
+            await navigation.navigate('Home', location);
+            // Retrieve existing cities from AsyncStorage
+        } catch (error) {
             console.log('Error saving location:', error);
         }
     }
@@ -115,8 +115,9 @@ function Search({ navigation }: { navigation: any }) {
                 {data.location && (
 
                     <Pressable
+                        key={data.location['name']}
                         style={styles.searchedItem}
-                        onPress={async () =>saveLocation(data.location['name'])}>
+                        onPress={async () => saveLocation(data.location['name'])}>
                         <Text
                             style={{
                                 fontSize: 20,
@@ -135,25 +136,27 @@ function Search({ navigation }: { navigation: any }) {
             </View>
             <ScrollView horizontal={false}>
                 {locations && locations.map((location: any) => (
-                    <View key={location} style={styles.listItem}>
-                        <Pressable
-                            onPress={async () => selectSavedLocation(location)}
-                            >
-                            <Text
-                                style={{
-                                    fontSize: 20,
-                                    height: 60,
-                                    padding: 15
-                                }}
-                            >{location}</Text>
-                        </Pressable>
+                    <Pressable
+                        key={location}
+                        style={styles.listItem}
+                        onPress={async () => selectSavedLocation(location)}
+                    >
+
+                        <Text
+                            style={{
+                                fontSize: 20,
+                                height: 60,
+                                padding: 15
+                            }}
+                        >{location}</Text>
+
                         <Pressable onPress={() => deleteLocation(location)}>
                             <Image
                                 source={require('../Icon/delete-button.png')}
-                                style={{ width: 35, height: 35,marginTop:10 }}
+                                style={{ width: 30, height: 30, marginTop: 14 }}
                             />
                         </Pressable>
-                    </View>
+                    </Pressable>
                 ))}
             </ScrollView>
         </View>
@@ -178,7 +181,7 @@ const styles = StyleSheet.create({
     },
     searchedItem: {
         flexDirection: 'row',
-        justifyContent: 'space-between', 
+        justifyContent: 'space-between',
         padding: 10,
         margin: 2,
         backgroundColor: '#d5ff33',

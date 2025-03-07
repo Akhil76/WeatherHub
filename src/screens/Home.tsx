@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { ScrollView, Text, Image, View, StyleSheet, FlatList, RefreshControl } from 'react-native';
 import { ApiKey } from '../OpenApiKey';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Hourly from '../components/Hourly';
 import Card from '../components/Card';
 import DailyCard from '../components/DailyCard';
 import HourlyCard from '../components/HourlyCard';

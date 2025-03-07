@@ -7,6 +7,7 @@ function Themes() {
   return (
     <View style={{ height: "100%" }}>
       <Text>Themes Settings</Text>
+      <Text>This app is still under developing.</Text>
     </View>
   );
 }
