@@ -89,7 +89,7 @@ function Home({ navigation }: Props) {
                     <View>
                         {
                         data.location && data.current && (
-                            <CurrentWeather data={data}  />
+                            <CurrentWeather data={data}/>
                         )}
                         {data.forecast && data.forecast.forecastday && (
                             <DailyForecast forecast={data.forecast.forecastday} navigation={navigation} />
